@@ -1,8 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import ApiError from "../exceptions/ApiError";
-import jwt from 'jsonwebtoken';
-import config from "../configs/default"
 import jwtService from "../services/jwtService"
+import errorMiddleware from "./errorMiddleware";
 
 declare global {
     namespace Express {
@@ -16,7 +15,7 @@ export default async function (req: Request, res:Response, next: NextFunction) {
 
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
-        return next(ApiError.UnauthorizedError());
+        return errorMiddleware(ApiError.UnauthorizedError(), req,res,next);
     }
     // const token = (req.headers.authorization || '').replace(/Bearer\s?/, '');
     const token = authorizationHeader.split(' ')[1];
@@ -26,9 +25,9 @@ export default async function (req: Request, res:Response, next: NextFunction) {
             req.userID = (await jwtService.verify(token))._id;
             next();
         } catch (e) {
-            next(ApiError.UnauthorizedError());
+            return errorMiddleware(ApiError.UnauthorizedError(), req,res,next);
         }
     } else {
-        next(ApiError.UnauthorizedError());
+        return errorMiddleware(ApiError.UnauthorizedError(), req,res,next);
     }
 }

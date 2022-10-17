@@ -1,11 +1,8 @@
-import UserModel from "../models/userModel";
+import UserModel, {IUser} from "../models/userModel";
 import mongoose from "mongoose";
 
-interface createUserPropsInterface{
-    email: string,
-    login:string,
+interface createUserPropsInterface extends Omit<IUser,"password">{
     hashPassword: string,
-    avatarUrl?: String,
 }
 
 export async function createUser(props:createUserPropsInterface){

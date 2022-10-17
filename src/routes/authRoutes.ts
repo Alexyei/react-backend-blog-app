@@ -4,7 +4,7 @@ import {loginValidation, registerValidation} from "../validations/authValidation
 import requestValidationMiddleware from "../middlewares/requestValidationMiddleware";
 import UserController from "../controllers/userController";
 import authMiddleware from "../middlewares/authMiddleware";
-export default function publicRoomsRoutes(router: Router) {
+export default function authRoutes(router: Router) {
 
     // router.post('/public-rooms/create',
     //    // authMiddleware,
@@ -23,6 +23,6 @@ export default function publicRoomsRoutes(router: Router) {
     // )
 
     router.post('/auth/login', loginValidation, requestValidationMiddleware, UserController.login);
-    router.post('/auth/register', registerValidation, requestValidationMiddleware, UserController.registration);
+    router.post('/auth/signup', registerValidation, requestValidationMiddleware, UserController.registration);
     router.get('/auth/me', authMiddleware, UserController.getMyData);
 }

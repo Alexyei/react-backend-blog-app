@@ -14,6 +14,8 @@ class JwtService {
                 expiresIn: config.jwt.expiresIn,
             },
         );
+
+        return token;
     }
 
     async verify(token:string){
