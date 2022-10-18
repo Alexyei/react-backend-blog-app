@@ -3,8 +3,8 @@ import mongoose, {model, Schema, Document} from "mongoose";
 export interface IPost{
     title: string,
     text: string,
-    tags: string,
-    viewCount:number,
+    tags: string[],
+    viewsCount:number,
     user:mongoose.Types.ObjectId,
     imageUrl?:string
 }

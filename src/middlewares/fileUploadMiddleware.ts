@@ -30,7 +30,7 @@ import * as path from "path";
 
 
 
-export default function (dest:string = "uploads/", types:string[]=["image/jpeg","image/jpg","image/png","image/gif"]){
+export default function (dest:((req:Request)=>string)|string = "uploads/", types:string[]=["image/jpeg","image/jpg","image/png","image/gif"]){
     function getFileExtension(filename:string){
         const ext = filename.split(".").pop()
 
@@ -45,15 +45,25 @@ export default function (dest:string = "uploads/", types:string[]=["image/jpeg",
         }
     }
 
+
+
     return function (req: Request, res:Response, next: NextFunction) {
+        function getDest(){
+            if (typeof dest === "string") {
+                return dest;
+            }
+            else return dest(req)
+        }
+
+        const destination = getDest()
 
         let newFilename = ""
         const storage = multer.diskStorage({
             destination: (_, __, cb) => {
-                if (!fs.existsSync(path.join(process.cwd(),dest))) {
-                    fs.mkdirSync(path.join(process.cwd(),dest),{ recursive: true });
+                if (!fs.existsSync(path.join(process.cwd(),destination))) {
+                    fs.mkdirSync(path.join(process.cwd(),destination),{ recursive: true });
                 }
-                cb(null, dest);
+                cb(null, destination);
             },
             filename: (_, file, cb) => {
                 newFilename = new Date().toISOString().replace(/:/g , "-")+getFileExtension(file.originalname)
