@@ -8,11 +8,23 @@ export interface IPostCreateProps extends Omit<IPost,"user"|"viewsCount">{
 
 export async function createPost(props:IPostCreateProps){
     const {userID, ...restProps} = {...props};
-    return await PostModel.create({...restProps, user: userID});
+    return await PostModel.create({...restProps, user: new mongoose.Types.ObjectId(userID)});
 }
 
 export async function updateMainImage(postID:string,imageUrl:string){
     return PostModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(postID)},{imageUrl});
+}
+
+export async function updatePost(postID:string,props:IPostCreateProps){
+    const {userID, ...restProps} = {...props};
+    await PostModel.updateOne(
+        {
+            _id: new mongoose.Types.ObjectId(postID),
+        },
+        {
+            ...restProps, user: new mongoose.Types.ObjectId(userID)
+        },
+    );
 }
 
 export async function deletePost(postID:string){
@@ -34,7 +46,7 @@ export async function getAllPostWithUserData(){
     return PostModel.aggregate()
         .lookup({ from: 'users', localField: 'user', foreignField: '_id', as: 'user' })
         .unwind("user")
-        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,"user._id":1,"user.login":1})
+        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,createdAt:1,"user._id":1,"user.login":1})
 }
 
 export async function findOneAndUpdate(postID:string){
@@ -44,6 +56,6 @@ export async function findOneAndUpdate(postID:string){
 export async function getPostWithUserData(postID:string){
     return PostModel.aggregate().match({_id:new mongoose.Types.ObjectId(postID)})
         .lookup({ from: 'users', localField: 'user', foreignField: '_id', as: 'user' })
-        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,"user._id":1,"user.login":1})
+        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,createdAt:1,imageUrl:1,"user._id":1,"user.login":1})
 }
 

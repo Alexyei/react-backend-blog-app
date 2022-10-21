@@ -9,7 +9,9 @@ export interface IPost{
     imageUrl?:string
 }
 
-export interface IPostDocument extends  Document, IPost{}
+export interface IPostDocument extends  Document, IPost{
+    createdAt:string
+}
 
 const PostSchema = new Schema({
     title: {

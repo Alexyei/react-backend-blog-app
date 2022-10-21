@@ -8,6 +8,7 @@ import UserDto from "./userDTO";
 export interface IPostWithUserDTO extends Omit<IPost, "user">{
     id: string;
     user: UserDto
+    createdAt: string,
 }
 
 export default class PostWithUserDto implements IPostWithUserDTO{
@@ -18,6 +19,7 @@ export default class PostWithUserDto implements IPostWithUserDTO{
     title: string;
     user: UserDto
     viewsCount: number;
+    createdAt: string;
 
 
     constructor(model:IPostDocument) {
@@ -27,9 +29,11 @@ export default class PostWithUserDto implements IPostWithUserDTO{
         this.text = model.text;
         this.title = model.title;
         this.viewsCount = model.viewsCount
+        this.createdAt = model.createdAt
 
         this.user = new UserDto(model.user as any)
     }
+
 
 
 }

@@ -63,6 +63,17 @@ class PostController {
     async update(req: Request, res: Response, next: NextFunction) {
         try {
 
+            const postId = req.params.id;
+
+            const props:IPostCreateProps = {
+                title: req.body.title,
+                text: req.body.text,
+                imageUrl: req.body.imageUrl,
+                tags: req.body.tags.split(','),
+                userID: req.userID,
+            }
+
+            return res.json(await postService.update(postId,props))
         } catch (error) {
             next(error);
         }
