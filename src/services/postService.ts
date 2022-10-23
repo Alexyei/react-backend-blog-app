@@ -38,8 +38,7 @@ class PostService {
     }
 
     async create(props: IPostCreateProps) {
-        props.imageUrl = undefined;
-        const new_post = await createPost(props)
+        const new_post = await createPost({...props,imageUrl:undefined})
 
         return this.getOne(new_post._id)
     }
@@ -106,6 +105,7 @@ class PostService {
     }
 
     async updateMainImage(userID: string, postID: string, newImageUrl?: string, lastImageUrl?: string) {
+
         if (lastImageUrl != newImageUrl) {
             const filePath = path.join(process.cwd(), `${newImageUrl}`)
             if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
@@ -126,6 +126,11 @@ class PostService {
 
                     return newUrl;
                 }
+
+
+            }
+            else{
+                return "";
             }
         }
 

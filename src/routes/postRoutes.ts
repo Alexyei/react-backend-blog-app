@@ -10,7 +10,7 @@ export default function postRoutes(router: Router) {
     router.get('/posts', PostController.getAll);
     router.get('/posts/tags', PostController.getLatestTags);
     router.get('/posts/:id', PostController.getOne);
-    router.post('/posts/create', authMiddleware, postCreateValidation, requestValidationMiddleware, PostController.create);
+    router.post('/posts', authMiddleware, postCreateValidation, requestValidationMiddleware, PostController.create);
     router.delete('/posts/:id',  authMiddleware, PostController.remove);
     router.patch(
         '/posts/:id',

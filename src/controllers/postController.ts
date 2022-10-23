@@ -43,7 +43,7 @@ class PostController {
             }
 
             const newPost = await postService.create(props)
-            const newUrl = await postService.saveMainImage(req.userID,newPost.id,newPost.imageUrl);
+            const newUrl = await postService.saveMainImage(req.userID,newPost.id,props.imageUrl);
             newPost.imageUrl = newUrl;
 
             return res.json(newPost);
