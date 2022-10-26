@@ -6,16 +6,20 @@ export interface IPostCreateProps extends Omit<IPost,"user"|"viewsCount">{
     userID:string
 }
 
+export interface IPostUpdateProps extends Partial<Omit<IPost,"user"|"viewsCount">>{
+    userID:string
+}
+
 export async function createPost(props:IPostCreateProps){
     const {userID, ...restProps} = {...props};
     return await PostModel.create({...restProps, user: new mongoose.Types.ObjectId(userID)});
 }
 
-export async function updateMainImage(postID:string,imageUrl:string){
+export async function updateMainImage(postID:string,imageUrl?:string){
     return PostModel.findOneAndUpdate({_id:new mongoose.Types.ObjectId(postID)},{imageUrl});
 }
 
-export async function updatePost(postID:string,props:IPostCreateProps){
+export async function updatePost(postID:string,props:IPostUpdateProps){
     const {userID, ...restProps} = {...props};
     await PostModel.updateOne(
         {
@@ -32,7 +36,7 @@ export async function deletePost(postID:string){
 }
 
 export async function latestPosts(limit=5){
-    return PostModel.find().limit(5);
+    return PostModel.find().sort({createdAt:-1}).limit(5);
 }
 export async function findPostByIDAndUser(id:string,userID:string){
     return PostModel.findOne({user:new mongoose.Types.ObjectId(userID),_id:new mongoose.Types.ObjectId(id)});
@@ -46,7 +50,8 @@ export async function getAllPostWithUserData(){
     return PostModel.aggregate()
         .lookup({ from: 'users', localField: 'user', foreignField: '_id', as: 'user' })
         .unwind("user")
-        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,createdAt:1,"user._id":1,"user.login":1})
+        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,createdAt:1,"user._id":1,"user.login":1,"user.avatarUrl":1})
+        .sort({createdAt:-1})
 }
 
 export async function findOneAndUpdate(postID:string){

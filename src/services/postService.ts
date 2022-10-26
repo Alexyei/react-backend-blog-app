@@ -3,7 +3,7 @@ import {
     findOneAndUpdate,
     findPostByIDAndUser, findPostByText,
     getAllPostWithUserData,
-    IPostCreateProps, latestPosts,
+    IPostCreateProps, IPostUpdateProps, latestPosts,
     updateMainImage, updatePost
 } from "../dao/postDAO";
 import ApiError from "../exceptions/ApiError";
@@ -43,7 +43,7 @@ class PostService {
         return this.getOne(new_post._id)
     }
 
-    async update(postID: string, props: IPostCreateProps) {
+    async update(postID: string, props: IPostUpdateProps & {text:string}) {
         const userID = props.userID;
 
         const post = await findPostByIDAndUser(postID, userID)
@@ -75,9 +75,20 @@ class PostService {
             throw ApiError.BadRequest('Пост с таким id и user id не найден')
         }
 
-        const deleted = await deletePost(postID) as any
 
+        const deleted = await deletePost(postID) as any
+        await this.deleteImg(userID,postID,post.imageUrl)
         return {id: deleted._id}
+    }
+
+    async deleteImg(userID: string, postID: string, imageUrl?: string){
+        if (!imageUrl) return;
+
+        const filePath = path.join(process.cwd(), `${imageUrl}`)
+
+        fs.unlinkSync(filePath)
+        const dirPath = path.join(process.cwd(),`uploads/post/${postID}/`)
+        fs.rmSync(dirPath, { recursive: true})
     }
 
     async saveMainImage(userID: string, postID: string, imageUrl?: string) {

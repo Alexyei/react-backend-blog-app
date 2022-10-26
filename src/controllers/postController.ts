@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import PostModel from "../models/postModel";
 import postService from "../services/postService";
-import {IPostCreateProps} from "../dao/postDAO";
+import {IPostCreateProps, updateMainImage} from "../dao/postDAO";
 class PostController {
     async getLatestTags(req: Request, res: Response, next: NextFunction) {
         try {
@@ -38,7 +38,7 @@ class PostController {
                 title: req.body.title,
                 text: req.body.text,
                 imageUrl: req.body.imageUrl,
-                tags: req.body.tags.split(','),
+                tags: (req.body.tags as string).split(',').map(tag=>tag.trim()),
                 userID: req.userID,
             }
 
@@ -46,6 +46,7 @@ class PostController {
             const newUrl = await postService.saveMainImage(req.userID,newPost.id,props.imageUrl);
             newPost.imageUrl = newUrl;
 
+            await updateMainImage(newPost.id,newUrl)
             return res.json(newPost);
         } catch (error) {
             next(error);
@@ -69,7 +70,7 @@ class PostController {
                 title: req.body.title,
                 text: req.body.text,
                 imageUrl: req.body.imageUrl,
-                tags: req.body.tags.split(','),
+                tags: (req.body.tags as string).split(',').map(tag=>tag.trim()),
                 userID: req.userID,
             }
 
