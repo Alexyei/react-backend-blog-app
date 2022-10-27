@@ -2,7 +2,7 @@ import {IUserDocument} from "../models/userModel";
 import bcrypt from "bcrypt";
 import ApiError from "../exceptions/ApiError";
 import UserDto from "../dto/userDTO";
-import {createUser, findUserByEmail, findUserByID} from "../dao/userDAO";
+import {createUser, findUserByEmail, findUserByID, getAllUsers} from "../dao/userDAO";
 
 
 class UserService {
@@ -41,6 +41,11 @@ class UserService {
 
         const userDto = new UserDto(user);
         return userDto;
+    }
+
+    async getUsersID():Promise<string[]>{
+        const users = await getAllUsers()
+        return users.map(u=>u._id.toString())
     }
 }
 

@@ -158,6 +158,11 @@ class PostService {
         const posts = await findPostsByTagWithUserData(tagName)
         return posts.map(p => new PostWithUserDto(p));
     }
+
+    async getPostsID():Promise<string[]>{
+        const posts = await getAllPostWithUserData()
+        return posts.map(p=>p._id.toString())
+    }
 }
 
 export default new PostService();

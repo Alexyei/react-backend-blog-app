@@ -21,3 +21,6 @@ export async function findUserByID(userID:string){
     return UserModel.findOne({_id:new mongoose.Types.ObjectId(userID)});
 }
 
+export async function getAllUsers(){
+    return UserModel.find();
+}
