@@ -8,6 +8,7 @@ export default function postRoutes(router: Router) {
     // router.get('/tags', PostController.getLastTags);
     //
     router.get('/posts', PostController.getAll);
+    router.get('/tag/:name', PostController.getAllByTag);
     router.get('/posts/tags', PostController.getLatestTags);
     router.get('/posts/:id', PostController.getOne);
     router.post('/posts', authMiddleware, postCreateValidation, requestValidationMiddleware, PostController.create);

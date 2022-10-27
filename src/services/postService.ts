@@ -1,7 +1,7 @@
 import {
     createPost, deletePost,
     findOneAndUpdate,
-    findPostByIDAndUser, findPostByText,
+    findPostByIDAndUser, findPostByText, findPostsByTagWithUserData,
     getAllPostWithUserData,
     IPostCreateProps, IPostUpdateProps, latestPosts,
     updateMainImage, updatePost
@@ -151,6 +151,11 @@ class PostService {
 
     async getAll() {
         const posts = await getAllPostWithUserData()
+        return posts.map(p => new PostWithUserDto(p));
+    }
+
+    async getAllByTag(tagName:string){
+        const posts = await findPostsByTagWithUserData(tagName)
         return posts.map(p => new PostWithUserDto(p));
     }
 }

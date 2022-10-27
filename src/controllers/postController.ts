@@ -19,6 +19,15 @@ class PostController {
         }
     }
 
+    async getAllByTag(req: Request, res: Response, next: NextFunction) {
+        try {
+            const tagName = req.params.name;
+            return res.json(await postService.getAllByTag(tagName))
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getOne(req: Request, res: Response, next: NextFunction) {
         try {
 

@@ -46,6 +46,15 @@ export async function findPostByText(text:string){
     return PostModel.findOne({text});
 }
 
+export async function findPostsByTagWithUserData(tag:string){
+    return PostModel.aggregate()
+        .match({tags: tag})
+        .lookup({ from: 'users', localField: 'user', foreignField: '_id', as: 'user' })
+        .unwind("user")
+        .project({_id:1,title:1,text:1,tags:1,viewsCount:1,imageUrl:1,createdAt:1,"user._id":1,"user.login":1,"user.avatarUrl":1})
+        .sort({createdAt:-1})
+}
+
 export async function getAllPostWithUserData(){
     return PostModel.aggregate()
         .lookup({ from: 'users', localField: 'user', foreignField: '_id', as: 'user' })
