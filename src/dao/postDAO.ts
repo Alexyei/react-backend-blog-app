@@ -46,6 +46,10 @@ export async function findPostByText(text:string){
     return PostModel.findOne({text});
 }
 
+export async function findPostByID(id:string){
+    return PostModel.findOne({_id:new mongoose.Types.ObjectId(id)});
+}
+
 export async function findPostsByTagWithUserData(tag:string){
     return PostModel.aggregate()
         .match({tags: tag})

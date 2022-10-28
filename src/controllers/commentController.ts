@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import commentService from "../services/commentService";
+import {IPostCreateProps} from "../dao/postDAO";
+import {ICommentCreateProps} from "../dao/commentDAO";
 
 
 class CommentController {
@@ -14,8 +16,15 @@ class CommentController {
 
     async createComment(req: Request, res: Response, next: NextFunction) {
         try {
+            const props:ICommentCreateProps = {
+                owner: req.body.owner,
+                text: req.body.text,
+                parent: req.body.parent,
+                author: req.userID
+            }
 
-            return res.json("new comment");
+
+            return res.json(await commentService.createComment(props));
         } catch (e) {
             next(e);
         }
@@ -23,8 +32,8 @@ class CommentController {
 
     async getPostComments(req: Request, res: Response, next: NextFunction) {
         try {
-            const postID = req.params.id;
-            return res.json("get comments");
+            const postID = req.params.postID;
+            return res.json(await commentService.getPostComments(postID));
         } catch (e) {
             next(e);
         }
