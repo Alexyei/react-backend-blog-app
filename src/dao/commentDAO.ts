@@ -70,11 +70,16 @@ export async function getNestedComments(commentID:string){
         .lookup({ from: 'users', localField: 'replies.author', foreignField: '_id', as: 'replies.author'})
         .addFields({'replies.author':{$first: '$replies.author'}})
         //
+        .addFields({'replies.text':{$cond:
+                    ['$replies.text',{$cond: [{$eq: ['$replies.isDeleted',false]},'$replies.text','НЛО прилетело и опубликовало эту надпись здесь']},'$replies.text']}})
         .addFields({'replies':{$cond: [ '$replies.author', '$replies', '$replies.replies' ]}})
-        .project({_id: 1, "author._id":1,"author.login":1,isDeleted:1,text:1,createdAt:1,"replies._id":1,"replies.parent":1,
+
+        .project({_id: 1, "author._id":1,"author.login":1,"author.avatarUrl":1,isDeleted:1,text:1,createdAt:1,"replies._id":1,"replies.parent":1,
             // "replies.author":1,
-            "replies.author._id":1,"replies.author.login":1,
+            "replies.author._id":1,"replies.author.login":1,"replies.author.avatarUrl":1,
             "replies.level":1,"replies.text":1,"replies.createdAt":1,"replies.isDeleted":1})
+        .addFields({'text':{$cond: [{$eq: ['$isDeleted',false]},'$text', 'НЛО прилетело и опубликовало эту надпись здесь']}})
+
         .sort({"replies.level":-1,"replies.createdAt":-1})
         // // .project({ "author":1,
         // //     text:1,
