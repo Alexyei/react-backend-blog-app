@@ -16,7 +16,7 @@ class CommentService{
 
     async createComment(props:ICommentCreateProps){
         const comment = await createComment(props)
-        return comment._id.toString()
+        return {_id:comment._id.toString(),createdAt:comment.createdAt}
     }
     async seedComments(){
 
